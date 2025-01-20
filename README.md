@@ -1,4 +1,4 @@
-# RedShift Table Comparison Tool
+# sp_compare_table
 
 A stored procedure for comparing any two RedShift tables or views and showing their differences. This creates 4 temporary tables that highlight differences between the compared tables:
 
