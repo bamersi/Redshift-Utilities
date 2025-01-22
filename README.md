@@ -1,14 +1,13 @@
 # sp_compare_table
 
-A stored procedure for comparing any two RedShift tables or views and showing their differences. This creates 4 temporary tables that highlight differences between the compared tables:
+A stored procedure for comparing any two RedShift tables or views. This creates 4 temporary tables that highlight differences:
 
-1. `tmp_compare` - Side-by-side comparison with a "diff" column
+1. `tmp_compare` - Side-by-side comparison with a "diff" column flagging cases where column values are different
 2. `tmp_compare_unpivot` - Unpivoted view showing differences by column
 3. `tmp_missing_t2` - Records present in table 1 but missing from table 2
 4. `tmp_missing_t1` - Records present in table 2 but missing from table 1
 
-The unpivotted result (2) is useful when comparing wide datasets with many features, such as modeling datasets used for machine learning. 
-For example, say we want to compare two different versions of this dataset:
+The unpivotted result (2) is useful when comparing wide datasets. For example, say we want to compare two different versions of this dataset:
 
 | snapshot_date | product_key | product_status | product_cost | product_units_sold |
 |--------------|-------------|----------------|--------------|-------------------|
@@ -18,25 +17,26 @@ For example, say we want to compare two different versions of this dataset:
 | 2024-01-15   | PRD-D332    | pending        | $45.75       | 567              |
 | 2024-01-15   | PRD-E901    | active         | $199.99      | 932              |
 
-The stored procedure generates a temporary table in this format:
+tmp_compare_unpivot shows the value from table 1, table 2, their difference calculated as (t2/t1)-1. Non numerical fields will show a percent difference of 1:
+
 
 | snapshot_date | product_key | col               | t1        | t2        | diff    |
 |--------------|-------------|-------------------|-----------|-----------|---------|
-| 2024-01-15   | PRD-A102    | product_status    | active    | inactive  | 1       |
-| 2024-01-15   | PRD-A102    | product_cost      | 125.99    | 130.99    | 3.97    |
-| 2024-01-15   | PRD-A102    | product_units_sold| 847       | 912       | 7.67    |
-| 2024-01-15   | PRD-B445    | product_status    | discontinued| discontinued| 0       |
-| 2024-01-15   | PRD-B445    | product_cost      | 89.50     | 89.50     | 0.00    |
-| 2024-01-15   | PRD-B445    | product_units_sold| 234       | 198       | -15.38  |
+| 2024-01-15   | PRD-A102    | product_status    | active    | inactive  | 1    |
+| 2024-01-15   | PRD-A102    | product_cost      | 125.99    | 130.99    | 0.0397  |
+| 2024-01-15   | PRD-A102    | product_units_sold| 847       | 912       | 0.0767  |
+| 2024-01-15   | PRD-B445    | product_status    | discontinued| discontinued| 0     |
+| 2024-01-15   | PRD-B445    | product_cost      | 89.50     | 89.50     | 0       |
+| 2024-01-15   | PRD-B445    | product_units_sold| 234       | 198       | -0.1538 |
 | 2024-01-15   | PRD-C789    | product_status    | active    | active    | 0       |
-| 2024-01-15   | PRD-C789    | product_cost      | 299.99    | 279.99    | -6.67   |
-| 2024-01-15   | PRD-C789    | product_units_sold| 1256      | 1489      | 18.55   |
-| 2024-01-15   | PRD-D332    | product_status    | pending   | active    | 1       |
-| 2024-01-15   | PRD-D332    | product_cost      | 45.75     | 49.99     | 9.27    |
-| 2024-01-15   | PRD-D332    | product_units_sold| 567       | 634       | 11.82   |
+| 2024-01-15   | PRD-C789    | product_cost      | 299.99    | 279.99    | -0.0667 |
+| 2024-01-15   | PRD-C789    | product_units_sold| 1256      | 1489      | 0.1855  |
+| 2024-01-15   | PRD-D332    | product_status    | pending   | active    | 1    |
+| 2024-01-15   | PRD-D332    | product_cost      | 45.75     | 49.99     | 0.0927  |
+| 2024-01-15   | PRD-D332    | product_units_sold| 567       | 634       | 0.1182  |
 | 2024-01-15   | PRD-E901    | product_status    | active    | active    | 0       |
-| 2024-01-15   | PRD-E901    | product_cost      | 199.99    | 199.99    | 0.00    |
-| 2024-01-15   | PRD-E901    | product_units_sold| 932       | 1045      | 12.12   |
+| 2024-01-15   | PRD-E901    | product_cost      | 199.99    | 199.99    | 0       |
+| 2024-01-15   | PRD-E901    | product_units_sold| 932       | 1045      | 0.1212  |
 
 This allows us to focus on the columns having the largest differences:
 ```sql
