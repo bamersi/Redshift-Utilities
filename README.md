@@ -90,3 +90,4 @@ Run `TEST - 001 - sp_compare_table.sql` to create and compare test tables.
    - Cast rounded value to decimal
    - Maintain NULL v_scale behavior using float
 4. Evaluate using EXCEPT for missing data comparison (performance testing needed)
+5. Boolean data types not yet supported. Workaround is to cast these to integers before the compare.
