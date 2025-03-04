@@ -522,7 +522,7 @@ end if;
 --Print Unpivot SQL
 if v_include_sql=true
 then
-  select sqlparse into v_sql_cmd_format from operations.sqlparse(v_sql_cmd);--Create a formatted verions of the query
+  select "ltrim" as "sqlparse" into v_sql_cmd_format from ltrim(v_sql_cmd);--Create a formatted verions of the query
   raise info ' ';
   raise info '/*** SQL: Pivot Prep CMD ***/';
   raise info '%', v_sql_cmd_format;
@@ -548,7 +548,7 @@ end if;
 --Print Unpivot SQL
 if v_include_sql=true
 then
-  select sqlparse into v_sql_cmd_format from operations.sqlparse(v_sql_cmd);--Create a formatted verions of the query
+  select "ltrim" as "sqlparse" into v_sql_cmd_format from ltrim(v_sql_cmd);--Create a formatted verions of the query
   raise info ' ';
   raise info '/*** SQL: Pivot with all diff CMD ***/';
   raise info '%', v_sql_cmd_format;
@@ -582,7 +582,7 @@ end if;
 --Print Un-Pivot SQL
 if v_include_sql=true
 then
-  select sqlparse into v_sql_cmd_format from operations.sqlparse(v_sql_cmd);--Create a formatted verions of the query
+  select "ltrim" as "sqlparse" into v_sql_cmd_format from ltrim(v_sql_cmd);--Create a formatted verions of the query
   raise info ' ';
   raise info '/*** SQL: Union CMD (Un-Pivot) ***/';
   raise info '%', v_sql_cmd_format;
@@ -624,7 +624,7 @@ end if;
 
 if v_include_sql=true
 then
-  select sqlparse into v_sql_cmd_format from operations.sqlparse(v_sql_cmd);--Create a formatted verions of the query
+  select "ltrim" as "sqlparse" into v_sql_cmd_format from ltrim(v_sql_cmd);--Create a formatted verions of the query
   raise info ' ';
   raise info '/*** SQL Left Join CMD ***/';
   raise info '%', v_sql_cmd_format;
@@ -668,7 +668,7 @@ end if;
 
 if v_include_sql=true
 then
-  select sqlparse into v_sql_cmd_format from operations.sqlparse(v_sql_cmd);--Create a formatted verions of the query
+  select "ltrim" as "sqlparse" into v_sql_cmd_format from ltrim(v_sql_cmd);--Create a formatted verions of the query
   raise info ' ';
   raise info '/*** SQL Right Join CMD ***/';
   raise info '%', v_sql_cmd_format;
